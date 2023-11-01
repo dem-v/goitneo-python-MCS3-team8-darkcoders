@@ -1,13 +1,14 @@
 from .exception_handling import input_error, PhoneNumberIsMissing, BadBirthdayFormat
-from .Name import Name
-from .Phone import Phone
-from .Birthday import Birthday
+from .Field import *
+
 
 class Record:
-    def __init__(self, name):
-        self.name = Name(name)
-        self.phones = []
-        self.birthday = None
+    def __init__(self, name, phone=None, email=None, address=None, birthday=None):
+        self.name = NameField(name)
+        self.phones = [PhoneField(phone)] if phone != None else []
+        self.email = EmailField(email)
+        self.address = AddressField(address)
+        self.birthday = BirthdayField(birthday)
 
     def __str__(self):
         return f"Contact name: {self.name.value}, phones: {'; '.join(p.value for p in self.phones)}{f', birthday {self.show_birthday()}' if self.birthday is not None else ''}"
@@ -43,13 +44,13 @@ class Record:
     def find_phone(self, phone: str):
         p = Phone(phone)
         return p if p in self.phones else None
-    
+
     @input_error
     def add_birthday(self, value):
         try:
             self.birthday = Birthday(value)
         except ValueError:
             raise BadBirthdayFormat(value)
-        
+
     def show_birthday(self):
         return str(self.birthday)
