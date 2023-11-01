@@ -1,5 +1,8 @@
-from .exception_handling import input_error, PhoneNumberIsMissing, BadBirthdayFormat
-from .Field import *
+from .exception_handling import input_error, PhoneNumberIsMissing, BadBirthdayFormat, NoteExists, NoteNotFound
+from .Name import Name
+from .Phone import Phone
+from .Birthday import Birthday
+from .Note import Note
 
 
 class Record:
@@ -9,6 +12,7 @@ class Record:
         self.email = EmailField(email)
         self.address = AddressField(address)
         self.birthday = BirthdayField(birthday)
+        self.notes = []
 
     def __str__(self):
         return f"Contact name: {self.name.value}, phones: {'; '.join(p.value for p in self.phones)}{f', birthday {self.show_birthday()}' if self.birthday is not None else ''}"
@@ -54,3 +58,26 @@ class Record:
 
     def show_birthday(self):
         return str(self.birthday)
+
+    @input_error
+    def add_note(self, text):
+        if any(note.text == text for note in self.notes):
+            raise NoteExists(text)
+        note = Note(text)
+        self.notes.append(note)
+
+    @input_error
+    def edit_note(self, old_text, new_text):
+        for note in self.notes:
+            if note.text == old_text:
+                note.text = new_text
+                return
+        raise NoteNotFound(old_text)
+
+    @input_error
+    def remove_note(self, text):
+        self.notes = [note for note in self.notes if note.text != text]
+
+    @input_error
+    def get_notes(self):
+        return [str(note) for note in self.notes]

@@ -7,6 +7,8 @@ import argparse
 def parse_input(user_input):
     cmd, *args = user_input.split()
     cmd = cmd.strip().lower()
+    if cmd == "add-note":
+        return cmd, " ".join(args)  # Об'єднайте всі аргументи у текст нотатки
     return cmd, *args
 
 
@@ -112,6 +114,79 @@ def get_birthday(contacts, args, *_):
     return f"Birthday of {name} is at {rec.show_birthday()}"
 
 
+@input_error
+def add_note(contacts, args, *_):
+    if len(args) < 1:
+        return "Please provide an argument for 'add-note'."
+
+    arg = args[0]
+    if " " not in arg:
+        return "Invalid argument format. Please provide an argument in the format 'name note_text'."
+
+    name, note = arg.split(" ", 1)
+    rec = contacts.find(name)
+    if rec is None:
+        raise KeyNotExistInContacts(name)
+
+    rec.add_note(note)
+    return f"Note added for contact {name}."
+
+
+@input_error
+def edit_note(contacts, args):
+    if len(args) < 3:
+        raise ValueError("Usage: edit-note <contact_name> <note_index> <new_note_text>")
+
+    name = args[0]
+    note_index = int(args[1]) - 1  # Відніміть 1, щоб перевести в 0-індекс
+    new_note_text = " ".join(args[2:])
+    rec = contacts.find(name)
+
+    if rec is None:
+        raise ValueError(f"Contact {name} not found.")
+
+    if 0 <= note_index < len(rec.notes):
+        rec.notes[note_index].text = new_note_text
+        return f"Note edited for contact {name}."
+    else:
+        raise ValueError("Note index out of range.")
+
+
+@input_error
+def remove_note(contacts, args, *_):
+    if len(args) < 1:
+        return "Please provide an argument for 'remove-note'."
+
+    name = args[0]
+    if len(args) > 1:
+        note = args[1]
+    else:
+        note = None
+
+    rec = contacts.find(name)
+    if rec is None:
+        raise KeyNotExistInContacts(name)
+
+    if note is not None:
+        rec.remove_note(note)
+        return f"Note removed for contact {name}."
+    else:
+        return f"Please provide a note to remove for contact {name}."
+
+
+@input_error
+def get_notes(contacts, args, *_):
+    name = args[0]
+    rec = contacts.find(name)
+    if rec is None:
+        raise KeyNotExistInContacts(name)
+
+    notes = rec.get_notes()
+    if not notes:
+        return f"No notes found for contact {name}."
+    return "\n".join(notes)
+
+
 def show_all_birthdays_for_week(contacts: AddressBook, *_):
     return contacts.get_birthdays_per_week(MAX_DELTA_DAYS, WEEKDAYS_LIST)
 
@@ -144,6 +219,10 @@ OPERATIONS = DefaultExecutionDict(
         "add-birthday": add_birthday,
         "show-birthday": get_birthday,
         "birthdays": show_all_birthdays_for_week,
+        "add-note": add_note,
+        "edit-note": edit_note,
+        "remove-note": remove_note,
+        "get-notes": get_notes,
     }
 )
 
