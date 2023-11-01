@@ -160,33 +160,60 @@ def remove_note(contacts, args, *_):
 
     name = args[0]
     if len(args) > 1:
-        note = args[1]
+        try:
+            note_index = int(args[1]) - 1  # Adjust index from 1-based to 0-based
+        except ValueError:
+            note_index = None
     else:
-        note = None
+        note_index = None
 
     rec = contacts.find(name)
     if rec is None:
         raise KeyNotExistInContacts(name)
 
-    if note is not None:
-        rec.remove_note(note)
-        return f"Note removed for contact {name}."
+    if note_index is not None:
+        if 0 <= note_index < len(rec.notes):
+            removed_note = rec.notes.pop(note_index)  # Remove the note by index
+            return f"Removed note '{removed_note}' for contact {name}."
+        else:
+            return "Note index is out of range."
     else:
-        return f"Please provide a note to remove for contact {name}."
+        return "Please provide a valid note index to remove for contact {name}."
 
 
 @input_error
 def get_notes(contacts, args, *_):
+    if len(args) < 1:
+        return "Please provide an argument for 'get-notes'."
+
     name = args[0]
+    search_keyword = None
+
+    if len(args) > 1:
+        search_keyword = " ".join(args[1:])
+
     rec = contacts.find(name)
     if rec is None:
         raise KeyNotExistInContacts(name)
 
     notes = rec.get_notes()
+
     if not notes:
         return f"No notes found for contact {name}."
-    return "\n".join(notes)
 
+    if search_keyword:
+        matching_notes = []
+        for index, note in enumerate(notes):
+            if search_keyword in note:
+                matching_notes.append(f"{index + 1}. {note}")
+
+        if matching_notes:
+            return "\n".join(matching_notes)
+        else:
+            return f"No notes containing '{search_keyword}' found for contact {name}."
+    else:
+        indexed_notes = [f"{index + 1}. {note}" for index, note in enumerate(notes)]
+        return "\n".join(indexed_notes)
 
 def show_all_birthdays_for_week(contacts: AddressBook, *_):
     return contacts.get_birthdays_per_week(MAX_DELTA_DAYS, WEEKDAYS_LIST)

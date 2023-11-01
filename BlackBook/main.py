@@ -3,6 +3,7 @@ from constants import BINARY_STORAGE_FILENAME
 from actions import OPERATIONS, parse_input, DEFAULT_METHOD
 from classes import AddressBook
 
+
 def execute_console():
     try:
         with open(BINARY_STORAGE_FILENAME, 'rb') as fh:
