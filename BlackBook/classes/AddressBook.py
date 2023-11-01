@@ -2,6 +2,7 @@ from datetime import datetime
 from collections import defaultdict, UserDict
 from .Record import Record
 from .Storage import Storage
+from .exception_handling import KeyExistInContacts
 
 
 def _save_to_disk_decorator(method):
@@ -17,6 +18,8 @@ class AddressBook(UserDict):
     def __init__(self, storage: Storage):
         self.storage = storage
         self.data = storage.read_from_disk()
+        for d in self.data.values():
+            print(f'{d}')
 
     def find(self, name: str):
         if not name in self.data.keys():
@@ -60,36 +63,33 @@ class AddressBook(UserDict):
 
         return ''.join(['{}: {}\n'.format(d, user_bd_by_weekday[d]) for d in user_bd_by_weekday if len(user_bd_by_weekday[d]) > 0])
 
-    def search_records(self, query):
-        return self.data.values()
-
     @_save_to_disk_decorator
     def add_record(self, rec: Record):
+        if self.data.get(rec.name.value) != None:
+            raise KeyExistInContacts()
+
         self.data[rec.name.value] = rec
 
+    def search_records(self, query):
+        matching_records = []
+        for record in self.data.values():
+            if record.matches_query(query):
+                matching_records.append(record)
+        return matching_records
+
     @_save_to_disk_decorator
-    def edit_records(self, query, name=None, phone=None, email=None, address=None, birthday=None):
+    def edit_records(self, query, **kwargs):
         updated_count = 0
         for record in self.search_records(query):
-            r = self.data[record.name.value]
+            record.update(**kwargs) # Update fields
             updated_count += 1
-            # if r != None:
-            #     if fields.name != None:
-            #         record.name = fields.name
-            #     if fields.email != None:
-            #         record.email = fields.email
-            #     if fields.address != None:
-            #         record.address = fields.address
-            #     if fields.birthday != None:
-            #         record.birthday = fields.birthday
-            #     if fields.phone != None:
-            #         record.phone.append(fields.phone)
+# Save to disk after editing
         return updated_count
 
     @_save_to_disk_decorator
     def remove_records(self, query):
-        removed = 0
+        removed_count = 0
         for record in self.search_records(query):
-            removed += 1
-
-        return removed
+            del self.data[record.name.value]
+            removed_count += 1
+        return removed_count
