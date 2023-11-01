@@ -135,7 +135,8 @@ def add_note(contacts, args, *_):
 @input_error
 def edit_note(contacts, args):
     if len(args) < 3:
-        raise ValueError("Usage: edit-note <contact_name> <note_index> <new_note_text>")
+        raise ValueError(
+            "Usage: edit-note <contact_name> <note_index> <new_note_text>")
 
     name = args[0]
     note_index = int(args[1]) - 1  # Відніміть 1, щоб перевести в 0-індекс
@@ -229,21 +230,39 @@ OPERATIONS = DefaultExecutionDict(
 DEFAULT_METHOD = print_bad
 
 
+def _split_phones(phone_string):
+    if phone_string == None or len(phone_string) < 2:
+        return []
+
+    splitted = phone_string.split()
+    phones = []
+    for s in splitted:
+        phones.extend(s.split(','))
+
+    phones = [phone.strip() for phone in phones if phone.strip()]
+
+    return phones
+
+
 class Command:
+    def __init__(self):
+        self.parser = argparse.ArgumentParser()
+        self.prepare_parser(self.parser)
 
     def validate_args(self, args):
         return None
 
     def executor(self, address_book, note_book, args):
         try:
-            parser = argparse.ArgumentParser()
-            self.prepare_parser(parser)
-            parsed = parser.parse_args(args)
+            parsed = self.parser.parse_args(args)
             error = self.validate_args(parsed)
             if error != None:
                 return f'Error: {error}'
 
             return self.execute(address_book, note_book, parsed)
+
+        except ValidationException as e:
+            return F'Validation: {e.message}'
 
         except SystemExit:
             return None
@@ -259,28 +278,52 @@ class Command:
 class AddContactCommand(Command):
 
     def prepare_parser(self, parser):
-        parser.add_argument("-n", "--name", help="", required=True)
-        parser.add_argument("-e", "--email", help="")
-        parser.add_argument("-p", "--phone", help="")
-        parser.add_argument("-b", "--birthday", help="")
-        parser.add_argument("-a", "--address", help="")
+        parser.add_argument(
+            "-n",
+            "--name",
+            help="Contact name"
+        )
+        parser.add_argument(
+            "-e",
+            "--email",
+            help="Contact email"
+        )
+        parser.add_argument(
+            "-p",
+            "--phones",
+            help="Contact phone: Must consist of 10 digits. Multiple phones are acceptable with space or comma separators."
+        )
+        parser.add_argument(
+            "-b",
+            "--birthday",
+            help="Contact birthday in format DD.MM.YYYY"
+        )
+        parser.add_argument(
+            "-a",
+            "--address",
+            help="Contact address"
+        )
 
     def validate_args(self, args):
-        if len(args.name) <= 2:
-            return 'Name must have more than 2 symbols'
+        if args.name == None:
+            return '-n or --name parameter is required'
 
         return None
 
     def execute(self, address_book, note_book, args):
-        address_book.add_record(
-            Record(
+        try:
+            record = Record(
                 name=args.name,
-                phone=args.phone,
+                phones=_split_phones(args.phones),
                 email=args.email,
                 address=args.address,
                 birthday=args.birthday,
             )
-        )
+            address_book.add_record(record)
+
+        except KeyExistInContacts:
+            return f"AddressBook contains Record with name {args.name}"
+
         return 'Contact successfully added'
 
 
@@ -291,7 +334,8 @@ class EditContactCommand(Command):
             "-q", "--query", help="Full contact name")
         parser.add_argument("-n", "--name", help="")
         parser.add_argument("-e", "--email", help="")
-        parser.add_argument("-p", "--phone", help="")
+        parser.add_argument("-p", "--phones", help="")
+        parser.add_argument("-rp", "--replace_phone", help="")
         parser.add_argument("-b", "--birthday", help="")
         parser.add_argument("-a", "--address", help="")
 
@@ -305,10 +349,12 @@ class EditContactCommand(Command):
                 ),
             ),
             name=args.name,
-            phone=args.phone,
+            phones=_split_phones(args.phones) if args.phones != None else [],
             email=args.email,
             address=args.address,
             birthday=args.birthday,
+            replace_phone=_split_phones(
+                args.replace_phone) if args.replace_phone != None else None
         )
         if updated_count == 0:
             return F"Couldn't find any records with the name \"{args.query}\"."
@@ -318,25 +364,19 @@ class EditContactCommand(Command):
 
 class RemoveContactCommand(Command):
 
+    def validate_args(self, args):
+        if args.name == None:
+            return '-n or --name parameter is required'
+
+        return None
+
     def prepare_parser(self, parser):
         parser.add_argument("-n", "--name", help="")
-        parser.add_argument("-e", "--email", help="")
-        parser.add_argument("-p", "--phone", help="")
-        parser.add_argument("-b", "--birthday", help="")
-        parser.add_argument("-a", "--address", help="")
 
     def execute(self, address_book, note_book, args):
         removed_count = address_book.remove_records(
             Query(
-                name=QueryField(args.name) if args.name != None else None,
-                email=QueryField(args.email)if args.email != None else None,
-                phone=QueryField(args.phone)if args.phone != None else None,
-                birthday=QueryField(args.birthday)
-                if args.birthday != None
-                else None,
-                address=QueryField(args.address)
-                if args.address != None
-                else None,
+                name=QueryField(args.name),
             ),
         )
         if removed_count == 0:
@@ -361,31 +401,33 @@ class SearchContactsCommand(Command):
                 full_match=False,
                 case_sensitive=False
             ) if args.name != None else None,
+
             email=QueryField(
                 args.email,
                 full_match=False,
                 case_sensitive=False
             )if args.email != None else None,
+
             phone=QueryField(
                 args.phone,
                 full_match=False,
                 case_sensitive=False
             )if args.phone != None else None,
+
             birthday=QueryField(
                 args.birthday,
                 full_match=False,
                 case_sensitive=False
             )
-            if args.birthday != None
-            else None,
+            if args.birthday != None else None,
+
             address=QueryField(
                 args.address,
                 full_match=False,
                 case_sensitive=False
             )
-            if args.address != None
-            else None,
+            if args.address != None else None,
         )
-        
+
         records = address_book.search_records(query)
-        return f'Founded {len(records)}'
+        return '\n'.join([str(record) for record in records])

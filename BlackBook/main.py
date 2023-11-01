@@ -47,32 +47,23 @@ commands = {
 }
 
 
-def parse_parameters(input_string):
-    pattern = r'(-\w+)\s+([^-\s][^-\n\r]*?)(?=\s+-\w+|$)'
-    matches = re.finditer(pattern, input_string)
+def split_arguments(input_string):
+    args = re.findall(
+        r'(?:--[a-zA-Z-]+|-{1,2}[a-zA-Z]+|[^\s-]+(?:\s+[^\s-]+)*)', input_string)
 
-    arguments = []
-    for match in matches:
-        param = match.group(1).strip()
-        value = match.group(2).strip()
-        arguments.append(param)
-        arguments.append(value)
-
-    return arguments
+    return args
 
 
 def main():
-    storage = Storage("records")
-    asd = storage.read_from_disk()
     address_book = AddressBook(
-        storage=storage,
+        storage=Storage("records"),
     )
     note_book = NoteBook()
 
     while True:
-        user_input = input("Enter a command: ").split(maxsplit=1)
+        user_input = split_arguments(input("Enter a command: "))
         command = user_input[0].strip().lower()
-        args = parse_parameters(''.join(user_input[1:]))
+        args = user_input[1:]
 
         if command in ["close", "exit"]:
             print("Good bye!")
@@ -84,16 +75,11 @@ def main():
                 args
             )
             if response != None:
-                if isinstance(response, list):
-                    for s in response:
-                        print(s)
-                else:
-                    print(response)
+                print(response)
+
         else:
             print("Invalid command.")
 
 
 if __name__ == "__main__":
     main()
-
-

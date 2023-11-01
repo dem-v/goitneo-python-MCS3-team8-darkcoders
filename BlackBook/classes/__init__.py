@@ -8,7 +8,7 @@ from .Name import Name
 from .Field import *
 from .Storage import Storage
 from .DefaultExecutionDict import DefaultExecutionDict
-from .exception_handling import input_error, KeyExistInContacts, KeyNotExistInContacts, BadPhoneNumber, PhoneNumberIsMissing, BadBirthdayFormat
+from .exception_handling import input_error, KeyExistInContacts, KeyNotExistInContacts, BadPhoneNumber, PhoneNumberIsMissing, BadBirthdayFormat, ValidationException
 
 
 __all__ = [
@@ -33,5 +33,6 @@ __all__ = [
     'PhoneNumberIsMissing',
     'BadBirthdayFormat',
     'input_error',
-    'Storage'
+    'Storage',
+    'ValidationException'
 ]
