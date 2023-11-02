@@ -2,6 +2,7 @@ from .Field import Field
 from ..exception_handling import ValidationException
 from datetime import datetime
 
+
 class BirthdayField(Field):
     def validate(self, value):
         try:
@@ -15,19 +16,21 @@ class BirthdayField(Field):
             raise ValidationException("Invalid birthday format")
 
     def matches_query(self, query_field):
-        if query_field is not None and isinstance(self.value, datetime):
-            if query_field.value:
-                try:
-                    query_date = datetime.strptime(
-                        query_field.value, "%d.%m.%Y")
-                except ValueError:
-                    return False
-            else:
-                query_date = datetime.now()
+        if not isinstance(self.value, datetime) or not query_field:
+            return True
 
-            if query_field.daysAfterToday is not None:
-                query_date += timedelta(days=query_field.daysAfterToday)
+        if not query_field.value and query_field.daysAfterToday is None:
+            return True
 
-            return self.value.date() == query_date.date()
+        if query_field.value:
+            try:
+                query_date = datetime.strptime(query_field.value, "%d.%m.%Y")
+            except ValueError:
+                return False
+        else:
+            query_date = datetime.now()
 
-        return False
+        if query_field.daysAfterToday is not None:
+            query_date += timedelta(days=query_field.daysAfterToday)
+
+        return self.value.date() == query_date.date()
