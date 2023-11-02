@@ -1,5 +1,5 @@
 from .Command import Command
-from ...classes import Record, split_phones, KeyExistInContacts
+from classes import Record, split_phones, KeyExistInContacts
 
 
 class AddContactCommand(Command):

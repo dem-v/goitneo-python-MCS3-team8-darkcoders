@@ -1,7 +1,6 @@
 from .Command import Command
-from ..query.Query import Query
-from ..query.QueryField import QueryField
-from ..query.DateQueryField import DateQueryField
+from classes import Query, QueryField, DateQueryField
+
 
 class SearchContactsCommand(Command):
     def prepare_parser(self, parser):

@@ -1,7 +1,5 @@
 from .Command import Command
-from ..query.Query import Query
-from ..query.QueryField import QueryField
-from ...classes import split_phones
+from classes import Query, QueryField, split_phones
 
 
 class EditContactCommand(Command):

@@ -1,13 +1,13 @@
 from .Command import Command
 
 
-class SearchContactsCommand(Command):
+class SearchNotesCommand(Command):
     def prepare_parser(self, parser):
         parser.add_argument("-q", "--query", help="")
 
     def validate_args(self, args):
         if args.query is None:
-            return "-t or --text parameter is required"
+            return "-q or --query parameter is required"
 
         return None
 

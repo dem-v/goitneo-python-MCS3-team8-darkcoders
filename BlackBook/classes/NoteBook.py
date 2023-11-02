@@ -16,9 +16,9 @@ def _save_to_disk_decorator(method):
 class NoteBook(UserList):
     def __init__(self, storage: Storage):
         self.storage = storage
-        self.data = storage.read_from_disk()
-        for d in self.data:
-            print(f"{d}")
+        data = storage.read_from_disk()
+        self.data = data if isinstance(data, list) else list(data.values())
+        print(self.print_all_notes())
 
     @_save_to_disk_decorator
     def add_record(self, rec: NoteField):
@@ -27,7 +27,7 @@ class NoteBook(UserList):
     def search_records(self, query: str):
         matching_records = {}
         for index, record in enumerate(self.data):
-            if query in record:
+            if query in record.value:
                 matching_records[index] = record
         return matching_records
 
@@ -52,3 +52,12 @@ class NoteBook(UserList):
                 raise NoteNotFound(f"Note index {id} out of range.")
 
             input_error(throw_bad_note_index, id)
+
+    def print_all_notes(self):
+        return (
+            "NOTES: \n"
+            + "\n".join(
+                [f"{index}. {record}" for index, record in enumerate(self.data)]
+            )
+            + "\n"
+        )
