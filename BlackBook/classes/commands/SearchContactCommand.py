@@ -1,7 +1,7 @@
 from .Command import Command
 from ..query.Query import Query
 from ..query.QueryField import QueryField
-
+from ..query.DateQueryField import DateQueryField
 
 class SearchContactsCommand(Command):
     def prepare_parser(self, parser):
@@ -9,6 +9,7 @@ class SearchContactsCommand(Command):
         parser.add_argument("-e", "--email", help="")
         parser.add_argument("-p", "--phone", help="")
         parser.add_argument("-b", "--birthday", help="")
+        parser.add_argument("-ba", "--birthdayAfter", help="")
         parser.add_argument("-a", "--address", help="")
 
     def execute(self, address_book, note_book, args):
@@ -22,12 +23,14 @@ class SearchContactsCommand(Command):
             phone=QueryField(args.phone, full_match=False, case_sensitive=False)
             if args.phone is not None
             else None,
-            birthday=QueryField(args.birthday, full_match=False, case_sensitive=False)
+            birthday=DateQueryField(args.birthday, daysAfterToday=args.birthdayAfter)
             if args.birthday is not None
             else None,
             address=QueryField(args.address, full_match=False, case_sensitive=False)
             if args.address is not None
             else None,
+            birthdayAfter = QueryField(args.birthdayAfter) 
+            if args.birthdayAfter != None else None,
         )
 
         records = address_book.search_records(query)
