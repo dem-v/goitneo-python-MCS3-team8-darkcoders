@@ -6,3 +6,8 @@ WEEKDAYS_LIST = [
 ]
 BINARY_STORAGE_FILENAME = "abook"
 BINARY_NOTEBOOK_STORAGE_FILENAME = "notes"
+
+COMMANDS = ['add', 'change', 'phone', 'show all', 'add-birthday',
+            'show-birthday', 'birthdays', 'add-note', 'edit-note',
+            'remove-note', 'get-notes', 'close', 'exit', 'hello', 'help']
+RECORD_ARGS = ['--name', '--email', '--phones', '--birthday', '--address']

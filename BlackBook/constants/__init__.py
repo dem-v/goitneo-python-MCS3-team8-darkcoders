@@ -3,6 +3,8 @@ from .constants import (
     WEEKDAYS_LIST,
     BINARY_STORAGE_FILENAME,
     BINARY_NOTEBOOK_STORAGE_FILENAME,
+    COMMANDS,
+    RECORD_ARGS
 )
 
 __all__ = [
@@ -10,4 +12,6 @@ __all__ = [
     "WEEKDAYS_LIST",
     "BINARY_STORAGE_FILENAME",
     "BINARY_NOTEBOOK_STORAGE_FILENAME",
+    "COMMANDS",
+    "RECORD_ARGS"
 ]

@@ -15,9 +15,33 @@ from commands import (
     HelloCommand,
     HelpCommand,
 )
-from constants import BINARY_STORAGE_FILENAME, BINARY_NOTEBOOK_STORAGE_FILENAME
+from constants import BINARY_STORAGE_FILENAME, BINARY_NOTEBOOK_STORAGE_FILENAME, RECORD_ARGS, COMMANDS
 import re
+import gnureadline
 
+
+gnureadline.set_completer_delims(' \t\n;')
+
+
+def completer(text, state):
+    options = []
+    if text.startswith('--') or text.startswith('-'):
+        options = [i for i in RECORD_ARGS if i.startswith(text)]
+    elif text == 'add-' or text.startswith('add-'):
+        options = [i for i in COMMANDS if i.startswith(text)]
+    elif '-' in text:
+        return None
+    else:
+        options = [i for i in COMMANDS if i.startswith(text)]
+
+    try:
+        return options[state]
+    except IndexError:
+        return None
+
+
+gnureadline.set_completer(completer)
+gnureadline.parse_and_bind("tab: complete")
 
 commands = {
     "add": AddContactCommand(),
@@ -58,7 +82,8 @@ def execute_console():
             print("Good bye!")
             break
         elif command in commands:
-            response = commands[command].executor(address_book, note_book, args)
+            response = commands[command].executor(
+                address_book, note_book, args)
             if response is not None:
                 print(response)
 
