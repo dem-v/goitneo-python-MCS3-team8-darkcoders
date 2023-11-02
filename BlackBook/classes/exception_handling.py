@@ -30,6 +30,11 @@ class NoteOperationError(Exception):
     pass
 
 
+class ValidationException(Exception):
+    def __init__(self, message):
+        self.message = message
+
+
 def input_error(func):
     def inner(*args, **kwargs):
         try:
