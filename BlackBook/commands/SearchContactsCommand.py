@@ -28,8 +28,9 @@ class SearchContactsCommand(Command):
             address=QueryField(args.address, full_match=False, case_sensitive=False)
             if args.address is not None
             else None,
-            birthdayAfter = QueryField(args.birthdayAfter) 
-            if args.birthdayAfter != None else None,
+            birthdayAfter=QueryField(args.birthdayAfter)
+            if args.birthdayAfter is not None
+            else None,
         )
 
         records = address_book.search_records(query)
