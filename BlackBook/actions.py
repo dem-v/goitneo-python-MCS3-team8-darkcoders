@@ -4,12 +4,14 @@ from classes import Record
 from classes import AddressBook
 from constants import MAX_DELTA_DAYS, WEEKDAYS_LIST
 
+global_notes = []
+
 
 def parse_input(user_input):
     cmd, *args = user_input.split()
     cmd = cmd.strip().lower()
     if cmd == "add-note":
-        return cmd, " ".join(args)  # Об'єднайте всі аргументи у текст нотатки
+        return cmd, " ".join(args)
     return cmd, *args
 
 
@@ -116,104 +118,143 @@ def get_birthday(contacts, args, *_):
 
 
 @input_error
-def add_note(contacts, args, *_):
+def add_note_with_or_without_contact(contacts, args, *_):
     if len(args) < 1:
         return "Please provide an argument for 'add-note'."
 
-    arg = args[0]
-    if " " not in arg:
-        return "Invalid argument format. Please provide an argument in the format 'name note_text'."
-
-    name, note = arg.split(" ", 1)
-    rec = contacts.find(name)
-    if rec is None:
-        raise KeyNotExistInContacts(name)
-
-    rec.add_note(note)
-    return f"Note added for contact {name}."
-
-
-@input_error
-def edit_note(contacts, args):
-    if len(args) < 3:
-        raise ValueError("Usage: edit-note <contact_name> <note_index> <new_note_text>")
-
-    name = args[0]
-    note_index = int(args[1]) - 1  # Відніміть 1, щоб перевести в 0-індекс
-    new_note_text = " ".join(args[2:])
-    rec = contacts.find(name)
-
-    if rec is None:
-        raise ValueError(f"Contact {name} not found.")
-
-    if 0 <= note_index < len(rec.notes):
-        rec.notes[note_index].text = new_note_text
-        return f"Note edited for contact {name}."
+    if len(args) > 1:
+        if " " not in args[0]:
+            return "Invalid argument format. Please provide an argument in the format 'name note_text'."
+        name, note_text = args[0].split(" ", 1)
     else:
-        raise ValueError("Note index out of range.")
+        # If there is only one argument, assume it's a global note
+        name = None
+        note_text = args[0]
+
+    if name:
+        rec = contacts.find(name)
+        if rec is None:
+            rec = Record(name)  # Create a new contact if it doesn't exist
+            contacts.add_record(rec)
+        rec.add_note(note_text)
+        return f"Note added for contact {name}."
+    else:
+        # Add the note to the global list
+        global_notes.append(note_text)
+        return "Global note added."
 
 
 @input_error
-def remove_note(contacts, args, *_):
+def edit_note_with_or_without_contact(contacts, args):
+    if len(args) < 3:
+        raise ValueError("Usage: edit-note [<contact_name>] <note_index> <new_note_text>")
+
+    if " " not in args[0]:
+        # No contact name provided, treat it as a global note
+        note_index = int(args[0]) - 1
+        new_note_text = " ".join(args[1:])
+        if 0 <= note_index < len(global_notes):
+            global_notes[note_index] = new_note_text
+            return "Global note edited."
+        else:
+            raise ValueError("Global note index out of range.")
+    else:
+        name, note_index, new_note_text = args[0], int(args[1]) - 1, " ".join(args[2:])
+        rec = contacts.find(name)
+        if rec is None:
+            raise ValueError(f"Contact {name} not found.")
+
+        if 0 <= note_index < len(rec.notes):
+            rec.notes[note_index].text = new_note_text
+            return f"Note edited for contact {name}."
+        else:
+            raise ValueError("Note index out of range.")
+
+
+@input_error
+def remove_note_with_or_without_contact(contacts, args, *_):
     if len(args) < 1:
         return "Please provide an argument for 'remove-note'."
 
-    name = args[0]
-    if len(args) > 1:
-        try:
-            note_index = int(args[1]) - 1  # Adjust index from 1-based to 0-based
-        except ValueError:
-            note_index = None
-    else:
-        note_index = None
-
-    rec = contacts.find(name)
-    if rec is None:
-        raise KeyNotExistInContacts(name)
-
-    if note_index is not None:
-        if 0 <= note_index < len(rec.notes):
-            removed_note = rec.notes.pop(note_index)  # Remove the note by index
-            return f"Removed note '{removed_note}' for contact {name}."
+    if " " not in args[0]:
+        # No contact name provided, treat it as a global note
+        note_index = int(args[0]) - 1
+        if 0 <= note_index < len(global_notes):
+            removed_note = global_notes.pop(note_index)
+            return "Global note removed."
         else:
-            return "Note index is out of range."
+            raise ValueError("Global note index is out of range.")
     else:
-        return "Please provide a valid note index to remove for contact {name}."
+        name = args[0]
+        if len(args) > 1:
+            try:
+                note_index = int(args[1]) - 1
+            except ValueError:
+                note_index = None
+        else:
+            note_index = None
+
+        rec = contacts.find(name)
+        if rec is None:
+            raise KeyNotExistInContacts(name)
+
+        if note_index is not None:
+            if 0 <= note_index < len(rec.notes):
+                removed_note = rec.notes.pop(note_index)
+                return f"Removed note '{removed_note}' for contact {name}."
+            else:
+                return "Note index is out of range."
+        else:
+            return f"Please provide a valid note index to remove for contact {name}."
 
 
 @input_error
-def get_notes(contacts, args, *_):
+def get_notes_with_or_without_contact(contacts, args, *_):
     if len(args) < 1:
         return "Please provide an argument for 'get-notes'."
 
-    name = args[0]
-    search_keyword = None
-
-    if len(args) > 1:
-        search_keyword = " ".join(args[1:])
-
-    rec = contacts.find(name)
-    if rec is None:
-        raise KeyNotExistInContacts(name)
-
-    notes = rec.get_notes()
-
-    if not notes:
-        return f"No notes found for contact {name}."
-
-    if search_keyword:
+    if " " not in args[0]:
+        # No contact name provided, treat it as a global note
+        search_keyword = " ".join(args)
         matching_notes = []
-        for index, note in enumerate(notes):
+        for index, note in enumerate(global_notes):
             if search_keyword in note:
                 matching_notes.append(f"{index + 1}. {note}")
 
         if matching_notes:
             return "\n".join(matching_notes)
         else:
-            return f"No notes containing '{search_keyword}' found for contact {name}."
+            return f"No global notes containing '{search_keyword}' found."
     else:
-        indexed_notes = [f"{index + 1}. {note}" for index, note in enumerate(notes)]
-        return "\n".join(indexed_notes)
+        name = args[0]
+        search_keyword = None
+
+        if len(args) > 1:
+            search_keyword = " ".join(args[1:])
+
+        rec = contacts.find(name)
+        if rec is None:
+            raise KeyNotExistInContacts(name)
+
+        notes = rec.get_notes()
+
+        if not notes:
+            return f"No notes found for contact {name}."
+
+        if search_keyword:
+            matching_notes = []
+            for index, note in enumerate(notes):
+                if search_keyword in note:
+                    matching_notes.append(f"{index + 1}. {note}")
+
+            if matching_notes:
+                return "\n".join(matching_notes)
+            else:
+                return f"No notes containing '{search_keyword}' found for contact {name}."
+        else:
+            indexed_notes = [f"{index + 1}. {note}" for index, note in enumerate(notes)]
+            return "\n".join(indexed_notes)
+
 
 def show_all_birthdays_for_week(contacts: AddressBook, *_):
     return contacts.get_birthdays_per_week(MAX_DELTA_DAYS, WEEKDAYS_LIST)
@@ -247,10 +288,10 @@ OPERATIONS = DefaultExecutionDict(
         "add-birthday": add_birthday,
         "show-birthday": get_birthday,
         "birthdays": show_all_birthdays_for_week,
-        "add-note": add_note,
-        "edit-note": edit_note,
-        "remove-note": remove_note,
-        "get-notes": get_notes,
+        "add-note": add_note_with_or_without_contact,
+        "edit-note": edit_note_with_or_without_contact,
+        "remove-note": remove_note_with_or_without_contact,
+        "get-notes": get_notes_with_or_without_contact,
     }
 )
 
