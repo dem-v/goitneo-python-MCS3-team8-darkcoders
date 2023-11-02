@@ -3,6 +3,7 @@ from collections import defaultdict, UserDict
 from .Record import Record
 from .Storage import Storage
 from .exception_handling import KeyExistInContacts
+from .query.Query import Query
 
 
 def _save_to_disk_decorator(method):
@@ -70,7 +71,7 @@ class AddressBook(UserDict):
 
         self.data[rec.name.value] = rec
 
-    def search_records(self, query):
+    def search_records(self, query: Query):
         matching_records = []
         for record in self.data.values():
             if record.matches_query(query):
@@ -78,16 +79,16 @@ class AddressBook(UserDict):
         return matching_records
 
     @_save_to_disk_decorator
-    def edit_records(self, query, **kwargs):
+    def edit_records(self, query: Query, **kwargs):
         updated_count = 0
         for record in self.search_records(query):
-            record.update(**kwargs) # Update fields
+            record.update(**kwargs)  # Update fields
             updated_count += 1
 # Save to disk after editing
         return updated_count
 
     @_save_to_disk_decorator
-    def remove_records(self, query):
+    def remove_records(self, query: Query):
         removed_count = 0
         for record in self.search_records(query):
             del self.data[record.name.value]

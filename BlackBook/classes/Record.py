@@ -1,9 +1,9 @@
 from .exception_handling import input_error, PhoneNumberIsMissing, BadBirthdayFormat, NoteExists, NoteNotFound
-from .Name import Name
-from .Phone import Phone
-from .Birthday import Birthday
-from .Note import Note
-from .Field import *
+from .fields.NameField import NameField
+from .fields.PhoneField import PhoneField
+from .fields.EmailField import EmailField
+from .fields.AddressField import AddressField
+from .fields.BirthdayField import BirthdayField
 
 
 class Record:
@@ -64,7 +64,8 @@ class Record:
         if 'replace_phone' in fields:
             replace_phone = fields['replace_phone']
             if len(replace_phone) > 0:
-                found_index = next((index for index, phone in enumerate(self.phones) if phone.value == replace_phone[0]), -1)
+                found_index = next((index for index, phone in enumerate(
+                    self.phones) if phone.value == replace_phone[0]), -1)
                 if found_index >= 0:
                     if len(replace_phone) >= 2:
                         self.phones[found_index] = PhoneField(replace_phone[1])
