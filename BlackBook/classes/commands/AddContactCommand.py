@@ -1,53 +1,24 @@
-from ..Record import Record
-from ..exception_handling import KeyExistInContacts
 from .Command import Command
-
-def split_phones(phone_string):
-    if phone_string == None or len(phone_string) < 2:
-        return []
-
-    splitted = phone_string.split()
-    phones = []
-    for s in splitted:
-        phones.extend(s.split(','))
-
-    phones = [phone.strip() for phone in phones if phone.strip()]
-
-    return phones
+from ...classes import Record, split_phones, KeyExistInContacts
 
 
 class AddContactCommand(Command):
-
     def prepare_parser(self, parser):
-        parser.add_argument(
-            "-n",
-            "--name",
-            help="Contact name"
-        )
-        parser.add_argument(
-            "-e",
-            "--email",
-            help="Contact email"
-        )
+        parser.add_argument("-n", "--name", help="Contact name")
+        parser.add_argument("-e", "--email", help="Contact email")
         parser.add_argument(
             "-p",
             "--phones",
-            help="Contact phone: Must consist of 10 digits. Multiple phones are acceptable with space or comma separators."
+            help="Contact phone: Must consist of 10 digits. Multiple phones are acceptable with space or comma separators.",
         )
         parser.add_argument(
-            "-b",
-            "--birthday",
-            help="Contact birthday in format DD.MM.YYYY"
+            "-b", "--birthday", help="Contact birthday in format DD.MM.YYYY"
         )
-        parser.add_argument(
-            "-a",
-            "--address",
-            help="Contact address"
-        )
+        parser.add_argument("-a", "--address", help="Contact address")
 
     def validate_args(self, args):
-        if args.name == None:
-            return '-n or --name parameter is required'
+        if args.name is None:
+            return "-n or --name parameter is required"
 
         return None
 
@@ -65,4 +36,4 @@ class AddContactCommand(Command):
         except KeyExistInContacts:
             return f"AddressBook contains Record with name {args.name}"
 
-        return 'Contact successfully added'
+        return "Contact successfully added"

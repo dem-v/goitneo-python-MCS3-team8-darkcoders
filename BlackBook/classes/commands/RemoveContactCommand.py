@@ -2,11 +2,11 @@ from .Command import Command
 from ..query.Query import Query
 from ..query.QueryField import QueryField
 
-class RemoveContactCommand(Command):
 
+class RemoveContactCommand(Command):
     def validate_args(self, args):
-        if args.name == None:
-            return '-n or --name parameter is required'
+        if args.name is None:
+            return "-n or --name parameter is required"
 
         return None
 
@@ -22,4 +22,4 @@ class RemoveContactCommand(Command):
         if removed_count == 0:
             return "No records were removed."
 
-        return F'Successfully removed {removed_count} records'
+        return f"Successfully removed {removed_count} records"

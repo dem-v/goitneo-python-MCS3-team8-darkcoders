@@ -1,6 +1,6 @@
 from .StringValueField import StringValueField
 
 
-class AddressField(StringValueField):
+class NoteField(StringValueField):
     def validate(self, value):
         return value

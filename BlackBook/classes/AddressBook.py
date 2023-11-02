@@ -9,7 +9,7 @@ from .query.Query import Query
 def _save_to_disk_decorator(method):
     def wrapper(self, *args, **kwargs):
         result = method(self, *args, **kwargs)
-        self.storage.safe_to_disk(self.data)
+        self.storage.save_to_disk(self.data)
         return result
 
     return wrapper
@@ -20,10 +20,10 @@ class AddressBook(UserDict):
         self.storage = storage
         self.data = storage.read_from_disk()
         for d in self.data.values():
-            print(f'{d}')
+            print(f"{d}")
 
     def find(self, name: str):
-        if not name in self.data.keys():
+        if name not in self.data.keys():
             return None
         else:
             return self.data.get(name)
@@ -45,8 +45,10 @@ class AddressBook(UserDict):
             today_distance = (birthday_this_year - current_date).days
             # let's not forget about those who had birthday on weekend and today is Monday
             if today_distance < 0:
-                today_distance = (birthday_this_year.replace(
-                    year=current_date.year + 1) - current_date).days
+                today_distance = (
+                    birthday_this_year.replace(year=current_date.year + 1)
+                    - current_date
+                ).days
                 if today_distance > MAX_DELTA_DAYS:
                     continue
 
@@ -55,18 +57,26 @@ class AddressBook(UserDict):
 
             bd_week_day = birthday_this_year.weekday()
 
-            if (bd_week_day == 5 and today_distance < MAX_DELTA_DAYS - 2) or (bd_week_day == 6 and today_distance < MAX_DELTA_DAYS - 1):
+            if (bd_week_day == 5 and today_distance < MAX_DELTA_DAYS - 2) or (
+                bd_week_day == 6 and today_distance < MAX_DELTA_DAYS - 1
+            ):
                 bd_week_day = 0
 
             bd_week_day_name = WEEKDAYS_LIST[bd_week_day]
 
             user_bd_by_weekday[bd_week_day_name].append(name)
 
-        return ''.join(['{}: {}\n'.format(d, user_bd_by_weekday[d]) for d in user_bd_by_weekday if len(user_bd_by_weekday[d]) > 0])
+        return "".join(
+            [
+                "{}: {}\n".format(d, user_bd_by_weekday[d])
+                for d in user_bd_by_weekday
+                if len(user_bd_by_weekday[d]) > 0
+            ]
+        )
 
     @_save_to_disk_decorator
     def add_record(self, rec: Record):
-        if self.data.get(rec.name.value) != None:
+        if self.data.get(rec.name.value) is not None:
             raise KeyExistInContacts()
 
         self.data[rec.name.value] = rec
@@ -84,7 +94,7 @@ class AddressBook(UserDict):
         for record in self.search_records(query):
             record.update(**kwargs)  # Update fields
             updated_count += 1
-# Save to disk after editing
+        # Save to disk after editing
         return updated_count
 
     @_save_to_disk_decorator

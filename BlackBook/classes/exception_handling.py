@@ -59,4 +59,5 @@ def input_error(func):
             return f"Note not found {e}."
         except NoteOperationError as e:
             return f"Note operation error {e}."
+
     return inner
