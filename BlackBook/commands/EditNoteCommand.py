@@ -17,6 +17,6 @@ class EditNoteCommand(Command):
         return None
 
     def execute(self, address_book, note_book, args):
-        note_book.edit_record(args.id, NoteField(args.text))
+        note_book.edit_record(int(args.id), NoteField(args.text))
 
         return f"Note id {args.id} updated."

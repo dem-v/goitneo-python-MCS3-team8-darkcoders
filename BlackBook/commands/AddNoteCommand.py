@@ -7,7 +7,7 @@ class AddNoteCommand(Command):
         parser.add_argument("-t", "--text", help="Note text")
 
     def validate_args(self, args):
-        if args.name is None:
+        if args.text is None:
             return "-t or --text parameter is required"
 
         return None

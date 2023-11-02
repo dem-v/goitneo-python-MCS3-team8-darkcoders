@@ -9,6 +9,8 @@ from .RemoveContactCommand import RemoveContactCommand
 from .RemoveNoteCommand import RemoveNoteCommand
 from .SearchContactsCommand import SearchContactsCommand
 from .SearchNotesCommand import SearchNotesCommand
+from .PrintAllContactsCommand import PrintAllContactsCommand
+from .PrintAllNotesCommand import PrintAllNotesCommand
 
 __all__ = [
     "AddContactCommand",
@@ -22,4 +24,6 @@ __all__ = [
     "RemoveNoteCommand",
     "SearchContactsCommand",
     "SearchNotesCommand",
+    "PrintAllContactsCommand",
+    "PrintAllNotesCommand",
 ]

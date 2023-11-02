@@ -7,7 +7,7 @@ class SearchNotesCommand(Command):
 
     def validate_args(self, args):
         if args.query is None:
-            return "-t or --text parameter is required"
+            return "-q or --query parameter is required"
 
         return None
 

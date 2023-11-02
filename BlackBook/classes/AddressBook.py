@@ -19,8 +19,7 @@ class AddressBook(UserDict):
     def __init__(self, storage: Storage):
         self.storage = storage
         self.data = storage.read_from_disk()
-        for d in self.data.values():
-            print(f"{d}")
+        print(self.print_all_contacts())
 
     def find(self, name: str):
         if name not in self.data.keys():
@@ -104,3 +103,10 @@ class AddressBook(UserDict):
             del self.data[record.name.value]
             removed_count += 1
         return removed_count
+
+    def print_all_contacts(self):
+        return (
+            "CONTACTS: \n\n"
+            + "\n".join([f"{contact}" for contact in self.data.values()])
+            + "\n"
+        )
