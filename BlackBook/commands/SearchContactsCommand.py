@@ -1,6 +1,5 @@
 from .Command import Command
-from ..query.Query import Query
-from ..query.QueryField import QueryField
+from classes import Query, QueryField
 
 
 class SearchContactsCommand(Command):

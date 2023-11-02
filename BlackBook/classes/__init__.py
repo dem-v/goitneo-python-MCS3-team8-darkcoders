@@ -27,14 +27,6 @@ from .fields.EmailField import EmailField
 from .fields.AddressField import AddressField
 from .fields.BirthdayField import BirthdayField
 from .fields.NoteField import NoteField
-from .commands.AddContactCommand import AddContactCommand
-from .commands.EditContactCommand import EditContactCommand
-from .commands.RemoveContactCommand import RemoveContactCommand
-from .commands.SearchContactCommand import SearchContactsCommand
-from .commands.AddNoteCommand import AddNoteCommand
-from .commands.EditNoteCommand import EditNoteCommand
-from .commands.RemoveNoteCommand import RemoveNoteCommand
-from .commands.SearchNotesCommand import SearchNotesCommand
 from .helper_methods import split_phones
 
 __all__ = [
@@ -62,13 +54,5 @@ __all__ = [
     "input_error",
     "Storage",
     "ValidationException",
-    "AddContactCommand",
-    "EditContactCommand",
-    "RemoveContactCommand",
-    "SearchContactsCommand",
-    "AddNoteCommand",
-    "EditNoteCommand",
-    "RemoveNoteCommand",
-    "SearchNotesCommand",
     "split_phones",
 ]

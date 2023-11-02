@@ -1,7 +1,7 @@
 from .Command import Command
 
 
-class RemoveContactCommand(Command):
+class RemoveNoteCommand(Command):
     def validate_args(self, args):
         if args.id is None:
             return "-i or --id parameter is required"

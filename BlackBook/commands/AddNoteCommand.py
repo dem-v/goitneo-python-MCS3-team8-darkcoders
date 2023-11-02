@@ -1,4 +1,4 @@
-from ..fields.NoteField import NoteField
+from classes import NoteField
 from .Command import Command
 
 

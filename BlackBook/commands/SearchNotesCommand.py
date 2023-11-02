@@ -1,7 +1,7 @@
 from .Command import Command
 
 
-class SearchContactsCommand(Command):
+class SearchNotesCommand(Command):
     def prepare_parser(self, parser):
         parser.add_argument("-q", "--query", help="")
 

@@ -1,8 +1,8 @@
 from .Command import Command
-from ..fields.NoteField import NoteField
+from classes import NoteField
 
 
-class EditContactCommand(Command):
+class EditNoteCommand(Command):
     def prepare_parser(self, parser):
         parser.add_argument("-i", "--id", help="Note ID to replace")
         parser.add_argument("-t", "--text", help="Note text")

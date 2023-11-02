@@ -1,15 +1,19 @@
 from classes import (
     AddressBook,
     NoteBook,
+    Storage,
+)
+from commands import (
     AddContactCommand,
     EditContactCommand,
     RemoveContactCommand,
     SearchContactsCommand,
-    Storage,
     AddNoteCommand,
     EditNoteCommand,
     RemoveNoteCommand,
     SearchNotesCommand,
+    HelloCommand,
+    HelpCommand,
 )
 from constants import BINARY_STORAGE_FILENAME, BINARY_NOTEBOOK_STORAGE_FILENAME
 import re
@@ -24,6 +28,8 @@ commands = {
     "edit-note": EditNoteCommand(),
     "remove-note": RemoveNoteCommand(),
     "get-notes": SearchNotesCommand(),
+    "hello": HelloCommand(),
+    "help": HelpCommand(),
 }
 
 

@@ -1,5 +1,5 @@
-from abc import ABC
-from ..exception_handling import ValidationException
+from abc import ABC, abstractmethod
+from classes import ValidationException
 import argparse
 
 
