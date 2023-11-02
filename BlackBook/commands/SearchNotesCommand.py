@@ -3,7 +3,9 @@ from .Command import Command
 
 class SearchNotesCommand(Command):
     def prepare_parser(self, parser):
-        parser.add_argument("-q", "--query", help="")
+        parser.add_argument(
+            "-q", "--query", help="Query for searching notes by text")
+        parser.add_argument("-t", "--tag", help="Search notes by tag")
 
     def validate_args(self, args):
         if args.query is None:
@@ -12,7 +14,11 @@ class SearchNotesCommand(Command):
         return None
 
     def execute(self, address_book, note_book, args):
-        records = note_book.search_records(args.query)
-        return "\n".join(
-            [f"{index}. {record}" for index, record in records.items()]
-        )
+        if args.tag:
+            records = note_book.search_records(args.tag)
+        elif args.query:
+            records = note_book.search_records(args.query)
+        else:
+            return "Please provide a query or a tag for searching."
+
+        return "\n".join([f"{index}. {record}" for index, record in records.items()])

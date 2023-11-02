@@ -27,7 +27,7 @@ class NoteBook(UserList):
     def search_records(self, query: str):
         matching_records = {}
         for index, record in enumerate(self.data):
-            if query in record:
+            if query in record.value or query in record.tags:
                 matching_records[index] = record
         return matching_records
 
