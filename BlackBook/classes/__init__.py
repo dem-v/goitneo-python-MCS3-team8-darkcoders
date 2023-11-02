@@ -20,6 +20,7 @@ from .exception_handling import (
 )
 from .query.Query import Query
 from .query.QueryField import QueryField
+from .query.DateQueryField import DateQueryField
 from .fields.Field import Field
 from .fields.NameField import NameField
 from .fields.PhoneField import PhoneField
@@ -44,6 +45,7 @@ __all__ = [
     "BirthdayField",
     "Query",
     "QueryField",
+    "DateQueryField",
     "NoteField",
     "DefaultExecutionDict",
     "KeyExistInContacts",
