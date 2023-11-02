@@ -105,7 +105,37 @@ def execute_console():
 
         else:
             print("Invalid command.")
-
-
 if __name__ == "__main__":
     execute_console()
+
+
+#from datasources import ContactDto, ContactsDatasource
+#
+#cs = ContactsDatasource()
+# cs.add_contact(ContactDto(
+#     name='Serhii',
+#     phones=['1234567891', '5263417896', '5465465464654'],
+#     email='serhii@emailcom',
+#     address='Ukraine, asdasd asda sdk ka n sljdnals ndalks ndlk',
+#     birthday='26.11.1989',
+# ))
+# cs.add_contact(ContactDto(
+#     name='Serhii 2',
+#     phones=['6378378378', '7837837837', '3783783783783'],
+#     email='serhii2@emailcom',
+#     address='Ukraine, asdasd asda sdk ka n sljdnals ndalks ndlk',
+#     birthday='12.05.2000',
+# ))
+# cs.add_contact(ContactDto(
+#     name='Dmitro',
+#     phones=['13516844554'],
+#     email='serhii2@emailcom',
+#     address='Ukraine, asdasd asda sdk ka n sljdnals ndalks ndlk',
+#     birthday='12.05.2000',
+# ))
+#
+#res = cs.search_contacts(name='serh')
+#res2 = cs.search_contacts(birthday='26.11.1989')
+#res3 = cs.search_contacts(birthday='26.11.1989', name='Serhiy')
+#qwe = cs.delete_contact(name='Serhii 2')
+#print(f'{len(res)} {len(res2)} {len(res3)}')
