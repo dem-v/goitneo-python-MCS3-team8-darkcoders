@@ -65,6 +65,7 @@ def execute_console():
             print(
                 "Currently supported commands are: \n"
                 + "\n".join([str(k) for k in commands.keys()])
+                + "\n".join(["close", "exit", "help"])
                 + "\nRun [command name] -h or [command name] --help for detailed usage"
             )
 
