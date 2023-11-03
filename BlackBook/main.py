@@ -16,6 +16,8 @@ from commands import (
     HelpCommand,
     PrintAllContactsCommand,
     PrintAllNotesCommand,
+    PrintNotesWithTagsCommand,
+    GetNotesByTagCommand,
 )
 from constants import BINARY_STORAGE_FILENAME, BINARY_NOTEBOOK_STORAGE_FILENAME
 import re
@@ -37,6 +39,8 @@ commands = {
     "help": HelpCommand(),
     "printcontacts": PrintAllContactsCommand(),
     "printnotes": PrintAllNotesCommand(),
+    "printnoteswithtags": PrintNotesWithTagsCommand(),
+    "getnotesbytag": GetNotesByTagCommand(),
 }
 
 
