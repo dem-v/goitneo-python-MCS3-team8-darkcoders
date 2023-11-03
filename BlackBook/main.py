@@ -49,10 +49,6 @@ def completer(text, state):
 
     if text.startswith('--') or text.startswith('-'):
         options = [i for i in record_args if i.startswith(text)]
-    elif text == 'add-' or text.startswith('add-'):
-        options = [i for i in commands.keys() if i.startswith(text)]
-    elif '-' in text:
-        return None
     else:
         options = [i for i in commands.keys() if i.startswith(text)]
 
