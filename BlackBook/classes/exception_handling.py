@@ -17,6 +17,24 @@ class PhoneNumberIsMissing(Exception):
 class BadBirthdayFormat(Exception):
     pass
 
+
+class NoteExists(Exception):
+    pass
+
+
+class NoteNotFound(Exception):
+    pass
+
+
+class NoteOperationError(Exception):
+    pass
+
+
+class ValidationException(Exception):
+    def __init__(self, message):
+        self.message = message
+
+
 def input_error(func):
     def inner(*args, **kwargs):
         try:
@@ -35,5 +53,11 @@ def input_error(func):
             return f"This number does not exist {e}."
         except BadBirthdayFormat as e:
             return f"Birthday format '{e}' is incorrect. It should be DD.MM.YYYY."
+        except NoteExists as e:
+            return f"Note already exists {e}."
+        except NoteNotFound as e:
+            return f"Note not found {e}."
+        except NoteOperationError as e:
+            return f"Note operation error {e}."
 
     return inner

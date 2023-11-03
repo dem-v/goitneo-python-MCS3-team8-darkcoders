@@ -1,40 +1,112 @@
-import pickle
-from constants import BINARY_STORAGE_FILENAME
-from actions import OPERATIONS, parse_input, DEFAULT_METHOD
-from classes import AddressBook
+from classes import (
+    AddressBook,
+    NoteBook,
+    Storage,
+)
+from commands import (
+    AddContactCommand,
+    EditContactCommand,
+    RemoveContactCommand,
+    SearchContactsCommand,
+    AddNoteCommand,
+    EditNoteCommand,
+    RemoveNoteCommand,
+    SearchNotesCommand,
+    HelloCommand,
+    HelpCommand,
+    PrintAllContactsCommand,
+    PrintAllNotesCommand,
+    PrintNotesWithTagsCommand,
+    GetNotesByTagCommand,
+)
+from constants import BINARY_STORAGE_FILENAME, BINARY_NOTEBOOK_STORAGE_FILENAME
+import re
+import gnureadline
+
+
+gnureadline.set_completer_delims(' \t\n;')
+
+commands = {
+    "add": AddContactCommand(),
+    "delete": RemoveContactCommand(),
+    "edit": EditContactCommand(),
+    "search": SearchContactsCommand(),
+    "addnote": AddNoteCommand(),
+    "editnote": EditNoteCommand(),
+    "removenote": RemoveNoteCommand(),
+    "getnotes": SearchNotesCommand(),
+    "hello": HelloCommand(),
+    "help": HelpCommand(),
+    "printcontacts": PrintAllContactsCommand(),
+    "printnotes": PrintAllNotesCommand(),
+    "printnoteswithtags": PrintNotesWithTagsCommand(),
+    "getnotesbytag": GetNotesByTagCommand(),
+}
+
+
+record_args = set([e for c in commands.values()
+                   for a in c.get_args() for e in a])
+
+
+def completer(text, state):
+    options = []
+
+    if text.startswith('--') or text.startswith('-'):
+        options = [i for i in record_args if i.startswith(text)]
+    else:
+        options = [i for i in commands.keys() if i.startswith(text)]
+
+    try:
+        return options[state]
+    except IndexError:
+        return None
+
+
+gnureadline.set_completer(completer)
+gnureadline.parse_and_bind("tab: complete")
+
+
+def split_arguments(input_string):
+    args = re.findall(
+        r"(?:--[a-zA-Z-]+|-{1,2}[a-zA-Z]+|[^\s-]+(?:\s+[^\s-]+)*)", input_string
+    )
+
+    return args
+
 
 def execute_console():
-    try:
-        with open(BINARY_STORAGE_FILENAME, 'rb') as fh:
-            book = pickle.load(fh) 
-        print("Loaded previous address book")
-    except Exception as e:
-        print(f"Previous address book could not be loaded. {e} \nInitializing new one.")
-        book = AddressBook()
-        
-    print("Welcome to the assistant bot!")
-    while True:
-        user_input = input("Enter a command: ")
-        command, *args = parse_input(user_input)
+    address_book = AddressBook(
+        storage=Storage(BINARY_STORAGE_FILENAME),
+    )
+    note_book = NoteBook(
+        storage=Storage(BINARY_NOTEBOOK_STORAGE_FILENAME),
+    )
 
-        print(
-            OPERATIONS[command, DEFAULT_METHOD](book, args)
-        )
+    while True:
+        user_input = split_arguments(input("Enter a command: "))
+        command = user_input[0].strip().lower()
+        args = user_input[1:]
+
         if command in ["close", "exit"]:
+            print("Good bye!")
             break
-        
-    retry = True
-    while retry:
-        retry = False
-        try:
-            with open(BINARY_STORAGE_FILENAME, 'wb') as fh:
-                pickle.dump(book, fh)
-            print("The address book was saved")
-        except Exception as e:
-            print(f"The address book could not be saved. Error: {e}")
-            a = input("Would you like to retry? (y/n, default n)")
-            if a == 'y' or a[0] == 'y':
-                retry = True
+        elif command in ["help"]:
+            print(
+                "Currently supported commands are: \n"
+                + "\n".join([str(k) for k in commands.keys()])
+                + "\n"
+                + "\n".join(["close", "exit", "help"])
+                + "\nRun [command name] -h or [command name] --help for detailed usage"
+            )
+
+        elif command in commands:
+            response = commands[command].executor(
+                address_book, note_book, args)
+            if response is not None:
+                print(response)
+
+        else:
+            print("Invalid command.")
 
 
 if __name__ == "__main__":
