@@ -11,6 +11,8 @@ from .SearchContactsCommand import SearchContactsCommand
 from .SearchNotesCommand import SearchNotesCommand
 from .PrintAllContactsCommand import PrintAllContactsCommand
 from .PrintAllNotesCommand import PrintAllNotesCommand
+from .PrintNotesWithTagsCommand import PrintNotesWithTagsCommand
+from .GetNotesByTagCommand import GetNotesByTagCommand
 
 __all__ = [
     "AddContactCommand",
@@ -26,4 +28,6 @@ __all__ = [
     "SearchNotesCommand",
     "PrintAllContactsCommand",
     "PrintAllNotesCommand",
+    "PrintNotesWithTagsCommand",
+    "GetNotesByTagCommand",
 ]

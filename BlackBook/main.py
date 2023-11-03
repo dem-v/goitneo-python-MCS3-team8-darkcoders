@@ -16,6 +16,8 @@ from commands import (
     HelpCommand,
     PrintAllContactsCommand,
     PrintAllNotesCommand,
+    PrintNotesWithTagsCommand,
+    GetNotesByTagCommand,
 )
 from constants import BINARY_STORAGE_FILENAME, BINARY_NOTEBOOK_STORAGE_FILENAME
 import re
@@ -34,6 +36,8 @@ commands = {
     "help": HelpCommand(),
     "printcontacts": PrintAllContactsCommand(),
     "printnotes": PrintAllNotesCommand(),
+    "printnoteswithtags": PrintNotesWithTagsCommand(),
+    "getnotesbytag": GetNotesByTagCommand(),
 }
 
 
@@ -70,7 +74,8 @@ def execute_console():
             )
 
         elif command in commands:
-            response = commands[command].executor(address_book, note_book, args)
+            response = commands[command].executor(
+                address_book, note_book, args)
             if response is not None:
                 print(response)
 

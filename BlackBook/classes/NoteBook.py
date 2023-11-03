@@ -22,6 +22,8 @@ class NoteBook(UserList):
 
     @_save_to_disk_decorator
     def add_record(self, rec: NoteField):
+        if not isinstance(rec, NoteField):
+            raise ValueError("Record must be an instance of NoteField")
         self.data.append(rec)
 
     def search_records(self, query: str):
@@ -57,7 +59,17 @@ class NoteBook(UserList):
         return (
             "NOTES: \n"
             + "\n".join(
-                [f"{index}. {record}" for index, record in enumerate(self.data)]
+                [f"{index}. {record}" for index,
+                    record in enumerate(self.data)]
             )
             + "\n"
         )
+
+    def search_by_tag(self, tag):
+        return [note for note in self.data if tag in note.tags]
+
+    def search_records_by_tag(self, tag):
+        notes_with_tag = [note for note in self.data if note.has_tag(tag)]
+        if not notes_with_tag:
+            return "No notes with this tag found."
+        return notes_with_tag
