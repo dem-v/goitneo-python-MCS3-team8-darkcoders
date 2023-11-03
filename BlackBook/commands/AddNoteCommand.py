@@ -1,7 +1,6 @@
 from classes import NoteField
 from .Command import Command
 
-
 class AddNoteCommand(Command):
     def prepare_parser(self, parser):
         super().prepare_parser(parser)
