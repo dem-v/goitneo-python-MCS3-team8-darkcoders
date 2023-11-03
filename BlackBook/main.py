@@ -24,27 +24,6 @@ import gnureadline
 
 gnureadline.set_completer_delims(' \t\n;')
 
-
-def completer(text, state):
-    options = []
-    if text.startswith('--') or text.startswith('-'):
-        options = [i for i in RECORD_ARGS if i.startswith(text)]
-    elif text == 'add-' or text.startswith('add-'):
-        options = [i for i in COMMANDS if i.startswith(text)]
-    elif '-' in text:
-        return None
-    else:
-        options = [i for i in COMMANDS if i.startswith(text)]
-
-    try:
-        return options[state]
-    except IndexError:
-        return None
-
-
-gnureadline.set_completer(completer)
-gnureadline.parse_and_bind("tab: complete")
-
 commands = {
     "add": AddContactCommand(),
     "delete": RemoveContactCommand(),
@@ -59,6 +38,32 @@ commands = {
     "printcontacts": PrintAllContactsCommand(),
     "printnotes": PrintAllNotesCommand(),
 }
+
+
+record_args = set([e for c in commands.values()
+                   for a in c.get_args() for e in a])
+
+
+def completer(text, state):
+    options = []
+
+    if text.startswith('--') or text.startswith('-'):
+        options = [i for i in record_args if i.startswith(text)]
+    elif text == 'add-' or text.startswith('add-'):
+        options = [i for i in commands.keys() if i.startswith(text)]
+    elif '-' in text:
+        return None
+    else:
+        options = [i for i in commands.keys() if i.startswith(text)]
+
+    try:
+        return options[state]
+    except IndexError:
+        return None
+
+
+gnureadline.set_completer(completer)
+gnureadline.parse_and_bind("tab: complete")
 
 
 def split_arguments(input_string):
