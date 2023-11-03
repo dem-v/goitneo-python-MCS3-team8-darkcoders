@@ -12,3 +12,6 @@ class NoteField(StringValueField):
 
     def has_tag(self, tag):
         return tag in self.tags
+
+    def validate(self, value):
+        return value
