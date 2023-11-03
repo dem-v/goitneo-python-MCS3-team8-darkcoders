@@ -11,6 +11,9 @@ class Command(ABC):
     def validate_args(self, args):
         return None
 
+    def get_args(self):
+        return [a.option_strings for a in self.parser._actions]
+
     def executor(self, address_book, note_book, args):
         try:
             parsed = self.parser.parse_args(args)

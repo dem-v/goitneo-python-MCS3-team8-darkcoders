@@ -19,7 +19,10 @@ from commands import (
 )
 from constants import BINARY_STORAGE_FILENAME, BINARY_NOTEBOOK_STORAGE_FILENAME
 import re
+import gnureadline
 
+
+gnureadline.set_completer_delims(' \t\n;')
 
 commands = {
     "add": AddContactCommand(),
@@ -35,6 +38,28 @@ commands = {
     "printcontacts": PrintAllContactsCommand(),
     "printnotes": PrintAllNotesCommand(),
 }
+
+
+record_args = set([e for c in commands.values()
+                   for a in c.get_args() for e in a])
+
+
+def completer(text, state):
+    options = []
+
+    if text.startswith('--') or text.startswith('-'):
+        options = [i for i in record_args if i.startswith(text)]
+    else:
+        options = [i for i in commands.keys() if i.startswith(text)]
+
+    try:
+        return options[state]
+    except IndexError:
+        return None
+
+
+gnureadline.set_completer(completer)
+gnureadline.parse_and_bind("tab: complete")
 
 
 def split_arguments(input_string):
@@ -65,12 +90,14 @@ def execute_console():
             print(
                 "Currently supported commands are: \n"
                 + "\n".join([str(k) for k in commands.keys()])
+                + "\n"
                 + "\n".join(["close", "exit", "help"])
                 + "\nRun [command name] -h or [command name] --help for detailed usage"
             )
 
         elif command in commands:
-            response = commands[command].executor(address_book, note_book, args)
+            response = commands[command].executor(
+                address_book, note_book, args)
             if response is not None:
                 print(response)
 
