@@ -17,7 +17,7 @@ from commands import (
     PrintAllContactsCommand,
     PrintAllNotesCommand,
 )
-from constants import BINARY_STORAGE_FILENAME, BINARY_NOTEBOOK_STORAGE_FILENAME, RECORD_ARGS, COMMANDS
+from constants import BINARY_STORAGE_FILENAME, BINARY_NOTEBOOK_STORAGE_FILENAME
 import re
 import gnureadline
 
@@ -90,6 +90,7 @@ def execute_console():
             print(
                 "Currently supported commands are: \n"
                 + "\n".join([str(k) for k in commands.keys()])
+                + "\n"
                 + "\n".join(["close", "exit", "help"])
                 + "\nRun [command name] -h or [command name] --help for detailed usage"
             )

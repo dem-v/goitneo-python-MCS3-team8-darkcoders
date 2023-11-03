@@ -12,5 +12,5 @@ class RemoveNoteCommand(Command):
         parser.add_argument("-i", "--id", help="Note ID to replace")
 
     def execute(self, address_book, note_book, args):
-        note_book.remove_records(args.id)
+        note_book.remove_record(args.id)
         return f"Note {args.id} was removed."
