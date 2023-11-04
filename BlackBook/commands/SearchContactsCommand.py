@@ -23,13 +23,10 @@ class SearchContactsCommand(Command):
             if args.phone is not None
             else None,
             birthday=DateQueryField(args.birthday, daysAfterToday=args.birthdayAfter)
-            if args.birthday is not None
+            if (args.birthday is not None or args.birthdayAfter is not None)
             else None,
             address=QueryField(args.address, full_match=False, case_sensitive=False)
             if args.address is not None
-            else None,
-            birthdayAfter=QueryField(args.birthdayAfter)
-            if args.birthdayAfter is not None
             else None,
         )
 
