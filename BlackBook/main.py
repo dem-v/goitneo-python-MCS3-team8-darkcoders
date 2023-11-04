@@ -25,7 +25,6 @@ from prompt_toolkit import PromptSession
 from prompt_toolkit.completion import Completer, Completion
 from prompt_toolkit.history import InMemoryHistory
 from prompt_toolkit.completion import WordCompleter
-from prompt_toolkit.completion import Completer, Completion
 
 
 commands = {
@@ -46,15 +45,12 @@ commands = {
 }
 
 
-record_args = set([e for c in commands.values()
-                  for a in c.get_args() for e in a])
+record_args = set([e for c in commands.values() for a in c.get_args() for e in a])
 
 
-argument_completer = WordCompleter(
-    list(record_args), meta_dict=None, WORD=True)
+argument_completer = WordCompleter(list(record_args), meta_dict=None, WORD=True)
 
-command_completer = WordCompleter(
-    list(commands.keys()), meta_dict=None, WORD=True)
+command_completer = WordCompleter(list(commands.keys()), meta_dict=None, WORD=True)
 
 
 print(f"DEBUG: record_args contents: {record_args}")
@@ -70,11 +66,9 @@ class CommandCompleter(Completer):
         options = []
 
         if word_before_cursor.startswith("--") or word_before_cursor.startswith("-"):
-            options = [i for i in record_args if i.startswith(
-                word_before_cursor)]
+            options = [i for i in record_args if i.startswith(word_before_cursor)]
         else:
-            options = [i for i in commands.keys(
-            ) if i.startswith(word_before_cursor)]
+            options = [i for i in commands.keys() if i.startswith(word_before_cursor)]
 
         for option in options:
             yield Completion(option, start_position=-len(word_before_cursor))
@@ -128,8 +122,7 @@ def execute_console():
             )
 
         elif command in commands:
-            response = commands[command].executor(
-                address_book, note_book, args)
+            response = commands[command].executor(address_book, note_book, args)
             if response is not None:
                 print(response)
 
