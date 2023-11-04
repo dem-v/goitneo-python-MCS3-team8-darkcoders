@@ -21,10 +21,10 @@ from commands import (
 )
 from constants import BINARY_STORAGE_FILENAME, BINARY_NOTEBOOK_STORAGE_FILENAME
 import re
-import gnureadline
+from prompt_toolkit import PromptSession
+from prompt_toolkit.completion import Completer, Completion
+from prompt_toolkit.history import InMemoryHistory
 
-
-gnureadline.set_completer_delims(" \t\n;")
 
 commands = {
     "add": AddContactCommand(),
@@ -44,25 +44,28 @@ commands = {
 }
 
 
-record_args = set([e for c in commands.values() for a in c.get_args() for e in a])
+record_args = set([e for c in commands.values()
+                  for a in c.get_args() for e in a])
 
 
-def completer(text, state):
-    options = []
+class CommandCompleter(Completer):
+    def get_completions(self, document, complete_event):
+        word_before_cursor = document.get_word_before_cursor()
+        options = []
 
-    if text.startswith("--") or text.startswith("-"):
-        options = [i for i in record_args if i.startswith(text)]
-    else:
-        options = [i for i in commands.keys() if i.startswith(text)]
+        if word_before_cursor.startswith("--") or word_before_cursor.startswith("-"):
+            options = [i for i in record_args if i.startswith(
+                word_before_cursor)]
+        else:
+            options = [i for i in commands.keys(
+            ) if i.startswith(word_before_cursor)]
 
-    try:
-        return options[state]
-    except IndexError:
-        return None
+        for option in options:
+            yield Completion(option, start_position=-len(word_before_cursor))
 
 
-gnureadline.set_completer(completer)
-gnureadline.parse_and_bind("tab: complete")
+session = PromptSession(completer=CommandCompleter(),
+                        history=InMemoryHistory())
 
 
 def split_arguments(input_string):
@@ -82,7 +85,17 @@ def execute_console():
     )
 
     while True:
-        user_input = split_arguments(input("Enter a command: "))
+        try:
+            command_line = session.prompt("Enter a command: ")
+        except KeyboardInterrupt:
+            continue
+        except EOFError:
+            print("Good bye!")
+            break
+
+        user_input = split_arguments(command_line)
+        if not user_input:
+            continue
         command = user_input[0].strip().lower()
         args = user_input[1:]
 
@@ -99,7 +112,8 @@ def execute_console():
             )
 
         elif command in commands:
-            response = commands[command].executor(address_book, note_book, args)
+            response = commands[command].executor(
+                address_book, note_book, args)
             if response is not None:
                 print(response)
 
