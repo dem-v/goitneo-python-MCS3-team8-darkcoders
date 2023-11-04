@@ -17,6 +17,7 @@ from .exception_handling import (
     PhoneNumberIsMissing,
     BadBirthdayFormat,
     ValidationException,
+    NoteNotFound,
 )
 from .query.Query import Query
 from .query.QueryField import QueryField
@@ -28,7 +29,7 @@ from .fields.EmailField import EmailField
 from .fields.AddressField import AddressField
 from .fields.BirthdayField import BirthdayField
 from .fields.NoteField import NoteField
-from .helper_methods import split_phones
+from .helper_methods import split_phones, split_tags
 
 __all__ = [
     "AddressBook",
@@ -53,4 +54,6 @@ __all__ = [
     "Storage",
     "ValidationException",
     "split_phones",
+    "split_tags",
+    "NoteNotFound",
 ]
