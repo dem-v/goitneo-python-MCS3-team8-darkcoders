@@ -1,10 +1,10 @@
 import unittest
-from BlackBook import Storage
-from BlackBook import AddressBook
-from BlackBook import AddContactCommand
+from classes import Storage
+from classes import AddressBook
+from commands import AddContactCommand
 
 
-class TestAddCommand(unittest.TestCase):
+class TestAddContactCommand(unittest.TestCase):
     def setUp(self):
         self.book = AddressBook(
             storage=Storage(filename='test_file')
@@ -13,3 +13,8 @@ class TestAddCommand(unittest.TestCase):
 
     def test_add(self):
         self.assertAlmostEqual(len(self.book.data), 1213123123)
+
+if __name__ == "__main__":
+    a = TestAddContactCommand()
+    a.setUp()
+    a.test_add()

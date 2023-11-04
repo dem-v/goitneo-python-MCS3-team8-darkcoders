@@ -46,14 +46,14 @@ class NoteBook(UserList):
 
     @_save_to_disk_decorator
     def remove_record(self, rec_id: int):
-        if 0 <= rec_id < len(self.data):
-            return self.data.pop(rec_id)
+        if 0 <= int(rec_id) < len(self.data):
+            return self.data.pop(int(rec_id))
         else:
 
             def throw_bad_note_index(id: int):
                 raise NoteNotFound(f"Note index {id} out of range.")
 
-            input_error(throw_bad_note_index, id)
+            input_error(throw_bad_note_index, int(rec_id))
 
     def print_all_notes(self):
         return (
