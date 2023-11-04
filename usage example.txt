@@ -1,0 +1,46 @@
+help
+hello
+add -h
+add -n asdf -e asdfasdf@ijiasjdf.com -p 1234567890 -b 5.11.2023 -a s;kfdalkdfnadskjfnds
+add
+add -n a
+add -n abc -e a
+add -n abc -p 11
+add -n abc -b 1.1.23
+delete 
+delete -n
+delete -n a
+delete -n asdf
+add -n asdf -e asdfasdf@ijiasjdf.com -p 1234567890 -b 5.11.2023 -a s;kfdalkdfnadskjfnds
+add -n asdj -e asdfasdf@ijiasjdf.com -p 1234567890 -b 5.11.2023 -a s;kfdalkdfnadskjfnds
+edit
+edit -h
+edit -q asd
+edit -q asdf
+edit -q asdf -n asdff -e qwert@eie.com -rp 0987654321,123567890 -b 06.11.2023 -a akdljfnlasjfnalksdjfnaksdnjf
+edit -q asdf -n asdff -e qwert@eie.com -rp 0987654321,123567890 -b 06.11.2023 -a akdljfnlasjfnalksdjfnaksdnjf
+edit -q asdf -n asdff -e qwert@eie.com -p 0987654321 -b 06.11.2023 -a akdljfnlasjfnalksdjfnaksdnjf
+search
+search -h
+search -n asd
+search -e qwer
+search -p 345
+search -b 06.11.2023
+search -ba 2
+addnote
+addnote -h
+addnote -t
+addnote -t qwefdfvaadf
+addnote -t 9ijuiijniju
+addnote -t .,;,ad.,,ald,lkml,;o;M@@@!"
+addnote -t adsfadsf adsa --tags abc cde a b c
+printnotes
+printnoteswithtags
+editnote -i 0 -t adfnadslkvjnads -tg a bc d e c
+removenote -i 2
+getnotes -h
+getnotes -q fad
+getnotes -q adf --tag a
+getnotesbytag -h
+getnotesbytag -tg a
+

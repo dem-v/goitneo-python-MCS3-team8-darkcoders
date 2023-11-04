@@ -1,4 +1,4 @@
-from classes import NoteField
+from classes import NoteField, split_tags
 from .Command import Command
 
 
@@ -6,8 +6,7 @@ class AddNoteCommand(Command):
     def prepare_parser(self, parser):
         super().prepare_parser(parser)
         parser.add_argument("-t", "--text", help="Note text")
-        parser.add_argument("--tags", nargs='*',
-                            help="List of tags for the note")
+        parser.add_argument("--tags", nargs="*", help="List of tags for the note")
 
     def validate_args(self, args):
         if args.text is None:
@@ -16,7 +15,7 @@ class AddNoteCommand(Command):
         return None
 
     def execute(self, address_book, note_book, args):
-        note_text = NoteField(args.text, args.tags)
+        note_text = NoteField(args.text, split_tags(args.tags))
         note_book.add_record(note_text)
 
         if args.tags:

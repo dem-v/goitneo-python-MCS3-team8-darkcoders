@@ -10,5 +10,5 @@ class GetNotesByTagCommand(Command):
             raise ValueError("The --tag argument is required")
 
     def execute(self, address_book, note_book, args):
-        notes_with_tag = note_book.search_records_by_tag(args.tag)
-        return "\n".join(f"{index}. {note}" for index, note in enumerate(notes_with_tag))
+        notes_with_tag = note_book.search_by_tag(args.tag)
+        return "\n".join(f"{index}. {note}" for index, note in notes_with_tag.items())
