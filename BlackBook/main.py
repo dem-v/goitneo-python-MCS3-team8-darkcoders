@@ -24,6 +24,8 @@ import re
 from prompt_toolkit import PromptSession
 from prompt_toolkit.completion import Completer, Completion
 from prompt_toolkit.history import InMemoryHistory
+from prompt_toolkit.completion import WordCompleter
+from prompt_toolkit.completion import Completer, Completion
 
 
 commands = {
@@ -48,9 +50,23 @@ record_args = set([e for c in commands.values()
                   for a in c.get_args() for e in a])
 
 
+argument_completer = WordCompleter(
+    list(record_args), meta_dict=None, WORD=True)
+
+command_completer = WordCompleter(
+    list(commands.keys()), meta_dict=None, WORD=True)
+
+
+print(f"DEBUG: record_args contents: {record_args}")
+
+
 class CommandCompleter(Completer):
+    def __init__(self, commands, record_args):
+        self.commands = commands
+        self.record_args = record_args
+
     def get_completions(self, document, complete_event):
-        word_before_cursor = document.get_word_before_cursor()
+        word_before_cursor = document.get_word_before_cursor(WORD=True)
         options = []
 
         if word_before_cursor.startswith("--") or word_before_cursor.startswith("-"):
@@ -64,8 +80,8 @@ class CommandCompleter(Completer):
             yield Completion(option, start_position=-len(word_before_cursor))
 
 
-session = PromptSession(completer=CommandCompleter(),
-                        history=InMemoryHistory())
+completer = CommandCompleter(commands, record_args)
+session = PromptSession(completer=completer, history=InMemoryHistory())
 
 
 def split_arguments(input_string):
