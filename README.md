@@ -15,7 +15,7 @@ python3 main.py
 Також запустити програму BlackBook можливо через pip
 
 ```shell
-pip install -e .
+pip install -i https://test.pypi.org/simple/ BlackBook==1.0.1
 ```
 
 Після встановлення, ви можете запустити програму за допомогою наступної команди в консолі:
