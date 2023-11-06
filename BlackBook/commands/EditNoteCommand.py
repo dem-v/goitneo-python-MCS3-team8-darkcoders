@@ -19,7 +19,7 @@ class EditNoteCommand(Command):
         note = note_book.data[note_id]
 
         if args.text:
-            note.text = args.text
+            note.value = args.text
 
         if args.tags:
             note.tags = split_tags(args.tags)

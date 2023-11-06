@@ -62,13 +62,18 @@ class CommandCompleter(Completer):
         self.record_args = record_args
 
     def get_completions(self, document, complete_event):
+        if document.current_line_before_cursor.endswith(' '):
+            return
+
         word_before_cursor = document.get_word_before_cursor(WORD=True)
         options = []
 
         if word_before_cursor.startswith("--") or word_before_cursor.startswith("-"):
-            options = [i for i in record_args if i.startswith(word_before_cursor)]
+            options = [i for i in self.record_args if i.startswith(
+                word_before_cursor)]
         else:
-            options = [i for i in commands.keys() if i.startswith(word_before_cursor)]
+            options = [i for i in self.commands.keys(
+            ) if i.startswith(word_before_cursor)]
 
         for option in options:
             yield Completion(option, start_position=-len(word_before_cursor))
